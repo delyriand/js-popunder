@@ -23,14 +23,15 @@ Compatibility
 - Microsoft Internet Explorer 6-9
 - Apple Safari 5
 
-Example
+Examples
 -------
-	// opens google.com in full screen
+This example opens google.com in full screen
+
 	document.onclick = function() {
         jsPopunder('http://www.google.com');
 	};
 
-	// opens google.com in a 500x500 window only once
+This example opens google.com in a 500x500 window only once
 	var opened = false;
 	document.onclick = function() {
 	    if (!opened) {
