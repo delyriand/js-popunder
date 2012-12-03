@@ -32,6 +32,7 @@ This example opens google.com in full screen
 	};
 
 This example opens google.com in a 500x500 window only once
+
 	var opened = false;
 	document.onclick = function() {
 	    if (!opened) {
