@@ -1,44 +1,61 @@
-# js-popunder
+# js-popunder (v2)
 
 **js-popunder** is a pure javascript function that creates pop-under windows
-
-It uses some of the code from the **[jquery-popunder](https://github.com/hpbuniat/jquery-popunder)** plugin by [@hpbuniat](https://github.com/hpbuniat)
 
 Usage
 -----
 Popunders are popup windows that open behind the currently active browser window.
-You can open popunders on any user-generated event (including document.onclick).
+The latest version of this script opens popunders on document.onclick.
 
 Options
 -------
 - "sUrl": The url to open
-- "sName": The name of the popunder window (optional)
-- "sWidth": The width of the popunder (optional)
-- "sHeight": The height of the popunder (optional)
+- "sConfig": paramaters object (optional)
+
+Available Parameters
+-------
+- "name": The name of the popunder window (defaults to a random number)
+- "width": The width of the popunder (defaults to opener's width)
+- "height": The height of the popunder (defaults to opener's height)
+- "top": Popunder position from top (defaults to 0)
+- "left": Popunder position from left (defaults to 0)
+- "wait": Interval/wait time between popunders (in seconds, defaults to 3600 = 1 hour)
+- "cap": Max daily popunders per domain (capping, defaults to 2)
+- "cookie": Cookie name to be used (defaults to "__.popunder")
 
 Compatibility
 -------
 - Mozilla Firefox 3-17
-- Google Chrome 10-23
+- Google Chrome 10-24
 - Microsoft Internet Explorer 6-9
 - Apple Safari 5
 
 Examples
 -------
-This example opens google.com in full screen
+This example opens google.com in full screen using default settings:
 
-	document.onclick = function() {
-        jsPopunder('http://www.google.com');
-	};
+	jsPopunder('http://www.google.com');
 
-This example opens google.com in a 500x500 window only once
 
-	var opened = false;
-	document.onclick = function() {
-	    if (!opened) {
-	        jsPopunder('http://www.google.com', 'googlewindow', 500, 500);
-	        opened = true;
-	    }
-	};
+This example opens google.com in a 500x500 window
 
-Of course, you can (and probably should) add cookies to the mix to have more control over when and how many popunders to open.
+	jsPopunder('http://www.google.com', {
+		name: 'googleWindow', 
+		width: 500, 
+		height: 500
+	});
+
+Full example:
+
+	jsPopunder('http://www.google.com', {
+		name: 'googleWindow', 
+		width: 1025, 
+		height: 640, 
+		top: 0, 
+		left: 0, 
+		wait: 1800, 
+		cap: 10, 
+		cookie: 'googPop'
+	});
+
+Enjoy!
