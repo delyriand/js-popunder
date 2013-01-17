@@ -53,7 +53,7 @@ function jsPopunder(sUrl, sConfig) {
             setTimeout(function() {
                 document.onclick = function() { return; };
                 document.onmousedown = function() { return; };
-            }, 100);
+            }, 1000);
 
             var now = new Date();
             document.cookie = cookie+'=1;expires='+ new Date(now.setTime(now.getTime()+sWait)).toGMTString() +';path=/';
