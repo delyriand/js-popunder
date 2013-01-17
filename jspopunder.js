@@ -50,6 +50,10 @@ function jsPopunder(sUrl, sConfig) {
         if (popunder) {
             popunder.blur();
 
+            setTimeout(function() {
+                document.onclick = function() { return; };
+            }, 100);
+
             var now = new Date();
             document.cookie = cookie+'=1;expires='+ new Date(now.setTime(now.getTime()+sWait)).toGMTString() +';path=/';
             now = new Date();
