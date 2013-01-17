@@ -52,6 +52,7 @@ function jsPopunder(sUrl, sConfig) {
 
             setTimeout(function() {
                 document.onclick = function() { return; };
+                document.onmousedown = function() { return; };
             }, 100);
 
             var now = new Date();
