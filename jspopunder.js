@@ -1,5 +1,8 @@
 function jsPopunder(sUrl, sConfig) {
 
+    var _parent = (top != self && typeof(top.document.location.toString())==='string') ? top : self;
+    var popunder = null;
+
     sConfig = (sConfig || {});
 
     var sName   = (sConfig.name   || Math.floor((Math.random()*1000)+1));
@@ -41,75 +44,65 @@ function jsPopunder(sUrl, sConfig) {
     }
 
 
-    function openIt(sUrl, sName, sOptions) {
-        if (isCapped()) return;
-
-        var _parent = (top != self && typeof(top.document.location.toString())==='string') ? top : self;
-        var popunder = _parent.window.open(sUrl, sName, sOptions);
-
-        if (popunder) {
-            popunder.blur();
-
-            setTimeout(function() {
-                document.onclick = function() { return; };
-                document.onmousedown = function() { return; };
-            }, 1000);
-
-            var now = new Date();
-            document.cookie = cookie+'=1;expires='+ new Date(now.setTime(now.getTime()+sWait)).toGMTString() +';path=/';
-            now = new Date();
-            document.cookie = cookie+'Cap='+(popsToday+1)+';expires='+ new Date(now.setTime(now.getTime()+(84600*1000))).toGMTString() +';path=/';
-
-            window.focus();
-            try{ opener.window.focus(); }catch(err){}
-        }
-        return popunder;
-    }
-
-
-    function popunder(sUrl, sName, sWidth, sHeight, sPosX, sPosY) {
+    function doPopunder(sUrl, sName, sWidth, sHeight, sPosX, sPosY) {
         if (isCapped()) return;
 
         var sOptions = 'toolbar=no,scrollbars=yes,location=yes,statusbar=yes,menubar=no,resizable=1,width='+sWidth.toString()+',height='+sHeight.toString()+',screenX='+sPosX+',screenY='+sPosY;
 
-        if (browser.webkit) {
+        document.onclick = function() {
+            if (isCapped()) return;
+            popunder = _parent.window.open(sUrl, sName, sOptions);
+            if (popunder) {
+                // cookie
+                var now = new Date();
+                document.cookie = cookie+'=1;expires='+ new Date(now.setTime(now.getTime()+sWait)).toGMTString() +';path=/';
+                now = new Date();
+                document.cookie = cookie+'Cap='+(popsToday+1)+';expires='+ new Date(now.setTime(now.getTime()+(84600*1000))).toGMTString() +';path=/';
 
-            document.onmousedown = function () {
-                openIt(sUrl, sName, sOptions);
-            };
-            document.onclick = function() {
-                window.open("about:blank").close();
-            };
-
-        } else {
-            document.onclick = function() {
-                var popunder = openIt(sUrl, sName, sOptions);
-                if (popunder) {
-
-                    if (!browser.msie) {
-                        popunder.params = { url: sUrl };
-                        (function(e) {
-                            with (e) {
-                                if (typeof window.mozPaintCount != 'undefined' || typeof navigator.webkitGetUserMedia === "function") {
-                                    try {
-                                        var poltergeist = document.createElement('a');
-                                        poltergeist.href = "javascript:window.open('about:blank').close();document.body.removeChild(poltergeist)";
-                                        document.body.appendChild(poltergeist).click();
-                                    }catch(err){}
-                                }
-                            }
-                        })(popunder);
-                    }
-
-                }
-            };
-        }
+                pop2under();
+            }
+        };
     }
+
+
+    function pop2under() {
+        try {
+            popunder.blur();
+            popunder.opener.window.focus();
+            window.self.window.blur();
+            window.focus();
+
+            if (browser.firefox) openCloseWindow();
+            if (browser.webkit) openCloseTab();
+        } catch (e) {}
+    }
+
+    function openCloseWindow() {
+        var ghost = window.open('about:blank');
+        ghost.focus();
+        ghost.close();
+    }
+
+    function openCloseTab() {
+        var ghost    = document.createElement("a");
+        ghost.href   = "about:blank";
+        ghost.target = "PopHelper";
+        document.getElementsByTagName("body")[0].appendChild(ghost);
+        ghost.parentNode.removeChild(ghost);
+
+        var clk = document.createEvent("MouseEvents");
+        clk.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, true, false, false, true, 0, null);
+        ghost.dispatchEvent(clk);
+
+        // open a new tab for the link to target
+        window.open("about:blank", "PopHelper").close();
+    }
+
 
     // abort?
     if (isCapped()) {
         return;
     } else {
-        popunder(sUrl, sName, sWidth, sHeight, sPosX, sPosY);
+        doPopunder(sUrl, sName, sWidth, sHeight, sPosX, sPosY);
     }
 }
